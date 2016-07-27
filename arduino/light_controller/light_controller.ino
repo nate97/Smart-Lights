@@ -1,0 +1,62 @@
+String ON = "on";
+String OFF = "off";
+String inputString = "";         // a string to hold incoming data
+int led = 12;
+boolean stringComplete = false;  // whether the string is complete
+
+
+void setup() {
+  // initialize serial:
+  Serial.begin(9600);  
+  // reserve 200 bytes for the inputString:
+  inputString.reserve(200);
+  // initialize the digital pin as an output.
+  pinMode(led, OUTPUT);  
+}
+
+void loop() {
+  // print the string when a newline arrives:
+  if (stringComplete) {
+    
+    inputString.trim();
+    Serial.println(inputString); 
+
+  
+    if (inputString == ON) {
+      digitalWrite(led, HIGH);
+      Serial.println("Happy llamas");
+    }
+  
+    if (inputString == OFF) {
+      digitalWrite(led, LOW);
+      Serial.println("Sad llamas");
+    }
+  
+  
+    // clear the string:
+    inputString = "";
+    stringComplete = false;
+  }
+}
+
+
+/*
+  SerialEvent occurs whenever a new data comes in the
+ hardware serial RX.  This routine is run between each
+ time loop() runs, so using delay inside loop can delay
+ response.  Multiple bytes of data may be available.
+ */
+void serialEvent() {
+  while (Serial.available()) {
+    // get the new byte:
+    char inChar = (char)Serial.read(); 
+    // add it to the inputString:
+    inputString += inChar;
+    // if the incoming character is a newline, set a flag
+    // so the main loop can do something about it:
+    if (inChar == '\n') {
+      stringComplete = true;
+    } 
+  }
+}
+
