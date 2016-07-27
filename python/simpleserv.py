@@ -26,47 +26,64 @@ class MyServer(protocol.Protocol):
 
 
     def dataReceived(self, data):
-        try:
-            self.parseClientData(data)
-        except:
-            pass
+
+        #try:
+        self.parseClientData(data)
+        #except:
+        #    print ('Something went wrong...')
+
     
         ### THIS IS TEMPORARY!!! ###
-        bits = str.encode('We got your message! ')
-        "Send a message back to the client that we got the data!"
-        self.broadcastData(bits)
+        # Send a message back to the client that we got the data!
+        self.broadcastData('We got your message! ')
         
     
 
     # Send data to all currently connected clients
     def broadcastData(self, data):
+        broadcastMSG = str.encode(data)
         for client in self.factory.clients:    
-            broadcastMSG = str.encode('Hello clients!')
             client.transport.write(broadcastMSG) 
 
 
 
     # Send data to only the current client
     def sendData(self, data):
-        self.transport.write(data)
+        MSG = str.encode(data)
+        self.transport.write(MSG)
 
 
 
     def parseClientData(self, data):
-        data = bytes.decode(data)
+        cmds = bytes.decode(data)
         
         # The lamp ID comes first than the power state
         
-        
-        if ':' in data:
-            # Light args
-            args = data.split(":", 1)
-
-            # Lamp ID
-            print (args[0])
+        # Multiple commands
+        if '|' in cmds:
+            print ('Multiple strings')
+            cmds = cmds.split("|")
+            print (cmds)
+            #self.splitCmds(cmds)
             
-            # Power state
-            print (args[1])
+        # Single command
+        else:
+            print ('Single string')
+            #self.splitCmds(cmds)
+            print (cmds)
+             
+             
+             
+    # Split up individual commands with args
+    def splitCmds(self, cmds):
+        for x in cmds:
+            cmds = x.split(":")
+            print (x)
+
+
+    # Actually do something with the arguments
+    def interpretCmd(self, lampID, state):
+        print ('Do nothing...')
 
 
 
@@ -75,8 +92,8 @@ class MyServerFactory(protocol.Factory):
     clients = []
 
     lampID0 = 0
-    lampID1 = 0
-    lampID2 = 0
+    lampID1 = 1
+    lampID2 = 2
 
 
 

@@ -8,16 +8,14 @@ class MyClient(protocol.Protocol):
 
 
     def connectionMade(self):
-        
         # Placeholder testing sending data to the server
-        bits = str.encode('0:on')
-        self.transport.write(bits)
+        command = b'0:on'
+        self.transport.write(command)
     
     
     
     def dataReceived(self, data):
-        data = bytes.decode(data)
-        "As soon as any data is received, write it back."
+        #As soon as any data is received, write it back.
         print("Server said:", data)
 
     
