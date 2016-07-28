@@ -87,6 +87,7 @@ class MyServer(protocol.Protocol):
     
                 if count == 0:
                     command = value
+                # This only allows us one argument!!! FIXME
                 elif count == 1:
                     argument = value
     
@@ -108,11 +109,9 @@ class MyServerFactory(protocol.Factory):
     clients = []
     
     ### Add more lamp IDs between here! ###
-    
     lampID0 = 0
     lampID1 = 1
     lampID2 = 2
-    
     ### Add more lamp IDs between here! ###
     
     # Lamp state (Obviously...)
