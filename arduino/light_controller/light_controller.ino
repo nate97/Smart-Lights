@@ -1,38 +1,50 @@
-String ON = "on";
-String OFF = "off";
 String inputString = "";         // a string to hold incoming data
-int led = 12;
+int led = 0;
 boolean stringComplete = false;  // whether the string is complete
 
 
 void setup() {
   // initialize serial:
   Serial.begin(9600);  
-  // reserve 200 bytes for the inputString:
-  inputString.reserve(200);
+  // reserve 256 bytes for the inputString:
+  inputString.reserve(256);
   // initialize the digital pin as an output.
   pinMode(led, OUTPUT);  
 }
+
 
 void loop() {
   // print the string when a newline arrives:
   if (stringComplete) {
     
     inputString.trim();
-    Serial.println(inputString); 
-
-  
-    if (inputString == ON) {
-      digitalWrite(led, HIGH);
-      Serial.println("Happy llamas");
+    
+    // Declare the variables of the parts of the data
+    String lampID, state;
+    
+    // For loop which will separate the String in parts
+    // and assign them the the variables we declare
+    for (int i = 0; i < inputString.length(); i++) {
+      if (inputString.substring(i, i+1) == ":") {
+        lampID = inputString.substring(0, i);
+        state = inputString.substring(i+1);
+        break;
+      }
     }
-  
-    if (inputString == OFF) {
-      digitalWrite(led, LOW);
-      Serial.println("Sad llamas");
+    
+    // Define lamp and state integers
+    int lampIDInt = lampID.toInt();
+    int stateInt = state.toInt();
+    
+    if (stateInt == 0) {
+      digitalWrite(lampIDInt, HIGH);
+      Serial.println("Light ON");
     }
-  
-  
+    else if (stateInt == 1) {
+      digitalWrite(lampIDInt, LOW);
+      Serial.println("Light OFF");
+    }
+    
     // clear the string:
     inputString = "";
     stringComplete = false;
@@ -59,4 +71,5 @@ void serialEvent() {
     } 
   }
 }
+
 
