@@ -7,7 +7,6 @@ class MyServer(protocol.Protocol):
     print ('Starting server...')
     
     
-    
     def connectionMade(self):
         self.curClient = self
         
@@ -17,14 +16,12 @@ class MyServer(protocol.Protocol):
         print (self.factory.clients)
     
     
-    
     # This keeps our active client list from becoming saturated with carcases
     def connectionLost(self, reason):
         print ('Client ' + str(self.curClient) + ' has quit')
         
         # Remove from active clients list
         self.factory.clients.remove(self.curClient)
-    
     
     
     def dataReceived(self, data):
@@ -38,7 +35,6 @@ class MyServer(protocol.Protocol):
         self.broadcastData('We got your message! ')
     
     
-    
     # Send data to all active clients
     def broadcastData(self, data):
         broadcastMSG = str.encode(data)
@@ -46,12 +42,10 @@ class MyServer(protocol.Protocol):
             client.transport.write(broadcastMSG) 
     
     
-    
     # Send data to only the current client
     def sendData(self, data):
         MSG = str.encode(data)
         self.transport.write(MSG)
-    
     
     
     def parseClientData(self, data):
@@ -72,7 +66,6 @@ class MyServer(protocol.Protocol):
             self.splitCmdArgs(container)
             
             
-            
     # Splits up containers (Used when we have multiple
     # commands sent at once)
     def splitContainers(self, container):
@@ -80,21 +73,34 @@ class MyServer(protocol.Protocol):
             self.splitCmdArgs(containers)
     
     
-    
-    # Splits argument(s) and command appropriately
+    # Splits command and argument(s) appropriately
     def splitCmdArgs(self, args):
         if ':' in args:
+            
+            count = 0
+            command = ''
+            argument = ''
+            
             args = args.split(':')
-            for x in args:
-                print (x)
+            for value in args:
+                print (count)
     
+                if count == 0:
+                    command = value
+                elif count == 1:
+                    argument = value
+    
+                count =+ 1
+                #print (command)
+                #print (argument)
+
+                self.interpretCmd(command, argument)
     
     
     # Actually do something with the arguments...
     def interpretCmd(self, cmd, arg):
         print ('LampID: ' + str(cmd))
         print ('State: ' + str(arg))
-    
     
     
 class MyServerFactory(protocol.Factory):
@@ -116,5 +122,4 @@ class MyServerFactory(protocol.Factory):
 factory = MyServerFactory()
 reactor.listenTCP(PORT, factory)
 reactor.run()
-
 
